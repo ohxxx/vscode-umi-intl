@@ -1,5 +1,7 @@
+import path from 'path'
+import fs from 'fs'
 import { window, workspace } from 'vscode'
-import type { ExtensionContext } from 'vscode'
+import type { ExtensionContext, WorkspaceFolder } from 'vscode'
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 
@@ -47,6 +49,20 @@ export function activate(context: ExtensionContext) {
   })
 
   console.warn('xxx#result', result)
+  /**
+   * 测试 locales 配置读取
+   */
+  const workspaceFolders: ReadonlyArray<WorkspaceFolder> | undefined = workspace.workspaceFolders
+  console.warn('xxx#workspaceFolders', workspaceFolders)
+  if (workspaceFolders) {
+    const root = workspaceFolders[0]
+    const filePath = path.join(root.uri.fsPath, 'src/locales/zh-CN.ts')
+    const fileData = fs.readFileSync(filePath, 'utf-8')
+    const id = result[0].id
+    const idRE = new RegExp(`(?<=\\b${id}\\b:\\s*?('|"))(.*)(?='|"$)`, 'gmi')
+    const repValue = fileData.match(idRE)?.[0]
+    console.warn('xxx#repValue', repValue)
+  }
 }
 
 export function deactivate() { }
