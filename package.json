@@ -1,16 +1,16 @@
 {
-  "name": "react-intl",
-  "displayName": "React Intl",
-  "version": "0.0.0",
+  "name": "umi-intl",
+  "displayName": "Umi Intl",
+  "version": "0.0.1",
   "description": "React Intl for VS Code",
   "publisher": "xxxDeveloper",
-  "homepage": "https://github.com/xxxDeveloper/vscode-react-intl#readme",
+  "homepage": "https://github.com/xxxDeveloper/vscode-umi-intl#readme",
   "bugs": {
-    "url": "https://github.com/xxxDeveloper/vscode-react-intl/issues"
+    "url": "https://github.com/xxxDeveloper/vscode-umi-intl/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xxxDeveloper/vscode-react-intl"
+    "url": "https://github.com/xxxDeveloper/vscode-umi-intl"
   },
   "main": "./dist/extension.js",
   "files": [
