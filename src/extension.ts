@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import { window, workspace } from 'vscode'
+import { Position, Range, window, workspace } from 'vscode'
 import type { ExtensionContext, WorkspaceFolder } from 'vscode'
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
@@ -54,15 +54,42 @@ export function activate(context: ExtensionContext) {
    */
   const workspaceFolders: ReadonlyArray<WorkspaceFolder> | undefined = workspace.workspaceFolders
   console.warn('xxx#workspaceFolders', workspaceFolders)
-  if (workspaceFolders) {
-    const root = workspaceFolders[0]
-    const filePath = path.join(root.uri.fsPath, 'src/locales/zh-CN.ts')
-    const fileData = fs.readFileSync(filePath, 'utf-8')
-    const id = result[0].id
-    const idRE = new RegExp(`(?<=\\b${id}\\b:\\s*?('|"))(.*)(?='|"$)`, 'gmi')
-    const repValue = fileData.match(idRE)?.[0]
-    console.warn('xxx#repValue', repValue)
-  }
+  // if (workspaceFolders) {
+  const root = workspaceFolders![0]
+  const filePath = path.join(root.uri.fsPath, 'src/locales/zh-CN.ts')
+  const fileData = fs.readFileSync(filePath, 'utf-8')
+  const id = result[0].id
+  const idRE = new RegExp(`(?<=\\b${id}\\b:\\s*?('|"))(.*)(?='|"$)`, 'gmi')
+  const repValue = fileData.match(idRE)?.[0]
+  console.warn('xxx#repValue', repValue)
+  // }
+  /**
+   * 测试 TextEditorDecoration 创建
+   */
+  const activeEditor = window.activeTextEditor
+  const textDecoration = window.createTextEditorDecorationType({
+    after: {
+      contentText: repValue,
+      color: '#008B6C',
+      border: '1px solid rgba(0, 139, 108, 0.2)',
+    },
+  })
+
+  const disappearDecorationType = window.createTextEditorDecorationType({
+    textDecoration: 'none; display: none;',
+  })
+  const text2 = activeEditor?.document.getText()
+  const nameRE = /'WELCOME'/
+  const match = nameRE.exec(text2!)!
+  const startPos = activeEditor?.document.positionAt(match!.index)
+  const endPos = activeEditor?.document.positionAt(match.index + match[0].length)
+  const range = new Range(startPos!, endPos!)
+
+  activeEditor?.setDecorations(disappearDecorationType, [{ range }])
+  activeEditor?.setDecorations(textDecoration, [{
+    range,
+    hoverMessage: ['需要显示当前 id 的所有语言列表', 'xxxxx'],
+  }])
 }
 
 export function deactivate() { }
