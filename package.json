@@ -2,12 +2,13 @@
   "name": "umi-intl",
   "displayName": "Umi Intl",
   "version": "0.0.1",
-  "description": "React Intl for VS Code",
+  "description": "Umi Intl for VS Code",
   "publisher": "xxxDeveloper",
   "homepage": "https://github.com/xxxDeveloper/vscode-umi-intl#readme",
   "bugs": {
     "url": "https://github.com/xxxDeveloper/vscode-umi-intl/issues"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/xxxDeveloper/vscode-umi-intl"
