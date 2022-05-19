@@ -29,17 +29,15 @@ class TextDecoration {
   /**
    * 提示文本装饰类型
    */
-  private tipTextDecorationType(text: string) {
-    return window.createTextEditorDecorationType({
-      after: {
-        contentText: text,
-        // color: '#008B6C',
-        // border: '1px solid rgba(0, 139, 108, 0.2)',
-        color: 'white',
-        backgroundColor: 'red',
-      },
-    })
-  }
+  private tipTextDecorationType = window.createTextEditorDecorationType({
+    after: {
+      contentText: '前方施工中',
+      // color: '#008B6C',
+      // border: '1px solid rgba(0, 139, 108, 0.2)',
+      color: 'white',
+      backgroundColor: 'red',
+    },
+  })
 
   /**
    * 更新文本装饰
@@ -65,7 +63,7 @@ class TextDecoration {
     editor?.setDecorations(this.hideTextDecorationType, rangeArr)
     editor?.setDecorations(this.underlineDecorationType, rangeArr)
     // todo：tipTextDecorationType context 需要动态获取
-    editor?.setDecorations(this.tipTextDecorationType('前方施工中'), rangeArr)
+    editor?.setDecorations(this.tipTextDecorationType, rangeArr)
   }
 
   /**
@@ -86,27 +84,46 @@ class TextDecoration {
    * 清除文本装饰
    */
   private clear() {
-    /** ... */
+    const editor = window.activeTextEditor
+    if (editor) {
+      editor.setDecorations(this.hideTextDecorationType, [])
+      editor.setDecorations(this.underlineDecorationType, [])
+      editor.setDecorations(this.tipTextDecorationType, [])
+    }
   }
 
   /**
    * 监听光标位置
    */
   public watch() {
-    const editor = window.activeTextEditor!
+    const editor = window.activeTextEditor
+
+    if (!editor)
+      return
+
     const selection = editor.selection
+    const currentRange = []
+    const otherRange = []
     for (const item of this.#decorationRecord) {
       if (
         (selection.start.line <= item.start.line && item.start.line <= selection.end.line)
         || (selection.start.line <= item.end.line && item.end.line <= selection.end.line)
       ) {
         const range = new Range(item.start, item.end)
-        editor?.setDecorations(this.underlineDecorationType, [range])
-        editor?.setDecorations(this.tipTextDecorationType('哈哈哈哈哈哈'), [range])
-        /**
-         * @todo：清空/更新文本装饰
-         */
+        currentRange.push(range)
       }
+      else {
+        const range = new Range(item.start, item.end)
+        otherRange.push(range)
+      }
+      // clear
+      this.clear()
+      // reload
+      editor.setDecorations(this.hideTextDecorationType, otherRange)
+      editor.setDecorations(this.underlineDecorationType, otherRange)
+      editor.setDecorations(this.tipTextDecorationType, otherRange)
+      // reset
+      editor.setDecorations(this.underlineDecorationType, currentRange)
     }
   }
 
