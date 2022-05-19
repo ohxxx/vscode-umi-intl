@@ -9,7 +9,8 @@ export function activate(context: ExtensionContext) {
   /**
    * 更新当前文本装饰
    */
-  window.onDidChangeActiveTextEditor(customTextDecoration.create)
+  window.onDidChangeActiveTextEditor(() => customTextDecoration.create())
+  window.onDidChangeTextEditorSelection(() => customTextDecoration.watch())
 }
 
 export function deactivate() { }
