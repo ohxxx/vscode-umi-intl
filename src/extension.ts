@@ -1,6 +1,6 @@
 import type { ExtensionContext } from 'vscode'
 import { window } from 'vscode'
-import { updateTextDecoration } from './textDecoration'
+import customTextDecoration from './textDecoration'
 
 export function activate(context: ExtensionContext) {
   console.warn('xxx#context', context)
@@ -9,7 +9,7 @@ export function activate(context: ExtensionContext) {
   /**
    * 更新当前文本装饰
    */
-  window.onDidChangeActiveTextEditor(updateTextDecoration)
+  window.onDidChangeActiveTextEditor(customTextDecoration.create)
 }
 
 export function deactivate() { }
