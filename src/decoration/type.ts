@@ -9,7 +9,8 @@ class DecorationType {
 
   #underlineDecorationType: TextEditorDecorationType
     = window.createTextEditorDecorationType({
-      textDecoration: 'underline; text-decoration-style: double;',
+      textDecoration: 'underline;',
+      cursor: 'pointer',
     })
 
   #tipDecorationType: TextEditorDecorationType

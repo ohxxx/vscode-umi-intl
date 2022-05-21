@@ -58,7 +58,7 @@ class TextDecoration {
       const end = editor.document.positionAt(index + match[0].length)
       const range = new Range(start, end)
       ranges.push(range)
-      this.updateRecord({ id: 'xxx', start, end })
+      this.updateRecord({ id: match[0], start, end })
     }
 
     this.createTips(ranges)
