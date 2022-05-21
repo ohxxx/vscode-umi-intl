@@ -12,15 +12,15 @@ class TextDecoration {
     tip: decorationType.tip,
   }
 
-  private updateRecord(record: IDecorationRecord) {
+  #updateRecord(record: IDecorationRecord) {
     this.#record.push(record)
   }
 
-  private clearRecord() {
+  #clearRecord() {
     this.#record = []
   }
 
-  private createTips(ranges: Range[] /** text */) {
+  #createTips(ranges: Range[] /** text */) {
     const editor = window.activeTextEditor
 
     if (editor) {
@@ -43,7 +43,7 @@ class TextDecoration {
     }
   }
 
-  private update() {
+  #update() {
     const editor = window.activeTextEditor
 
     if (!editor)
@@ -58,22 +58,22 @@ class TextDecoration {
       const end = editor.document.positionAt(index + match[0].length)
       const range = new Range(start, end)
       ranges.push(range)
-      this.updateRecord({ id: match[0], start, end })
+      this.#updateRecord({ id: match[0], start, end })
     }
 
-    this.createTips(ranges)
+    this.#createTips(ranges)
     editor?.setDecorations(this.#type.hide, ranges)
   }
 
-  private check() {
+  #check() {
     /** ... */
   }
 
-  private refresh() {
+  #refresh() {
     /** ... */
   }
 
-  private clear() {
+  #clear() {
     const editor = window.activeTextEditor
     if (editor) {
       Object
@@ -104,19 +104,19 @@ class TextDecoration {
         otherRanges.push(range)
     }
 
-    this.clear()
+    this.#clear()
 
-    this.createTips(otherRanges)
+    this.#createTips(otherRanges)
     editor.setDecorations(this.#type.hide, otherRanges)
 
     editor.setDecorations(this.#type.underline, currentRanges)
   }
 
   public create() {
-    this.check()
-    this.clearRecord()
-    this.clear()
-    this.update()
+    this.#check()
+    this.#clearRecord()
+    this.#clear()
+    this.#update()
   }
 }
 
