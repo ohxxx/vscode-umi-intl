@@ -28,13 +28,14 @@ class TextDecoration {
       const render: DecorationOptions[] = []
       ranges.forEach((info) => {
         const { id, range } = info
+        const value = intl.value(id)
         render.push({
           range,
           renderOptions: {
             after: {
-              contentText: intl.value(id) ?? '',
-              color: '#888888',
-              border: '0.5px solid #888888',
+              contentText: value ?? '暂无匹配，请检查',
+              color: value ? '#888888' : '#FC5E5C',
+              border: `0.5px solid ${value ? '#888888' : '#FC5E5C'}`,
             },
           },
         })
