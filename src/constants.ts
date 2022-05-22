@@ -1,6 +1,5 @@
-/**
- * 多语言正则
- *   暂时只支持 {intl.formatMessage({ id: 'xxx' })}
- *   等完成最小闭环后补全
- */
-export const INTL_RE = /(?<=\bformatMessage\(\s*\{\s*id:\s*['"`]).*?(?=['"`])/gmi
+export const INTL_ID_RE = /(?<=\bformatMessage\(\s*\{\s*id:\s*['"`]).*?(?=['"`])/gmi
+
+export const INTL_FILE_RE = /\b([a-zA-Z]+\-[a-zA-Z]+)(?=\.(js|json|ts))/i
+
+export const INTL_KEY_VALUE_RE = /\b['"`]*(.*?)['"`]*:\s*['"`](.*?)['"`],*/gmi

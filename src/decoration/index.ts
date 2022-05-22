@@ -1,7 +1,8 @@
 import type { DecorationOptions } from 'vscode'
 import { Range, window } from 'vscode'
-import { INTL_RE } from '../constants'
-import type { IDecorationRecord, IDecorationType } from '../types'
+import { INTL_ID_RE } from '../constants'
+import intl from '../intl'
+import type { IDecorationRecord, IDecorationType, ITipRange } from '../types'
 import decorationType from './type'
 
 class TextDecoration {
@@ -20,20 +21,20 @@ class TextDecoration {
     this.#record = []
   }
 
-  #createTips(ranges: Range[] /** text */) {
+  #createTips(ranges: ITipRange[]) {
     const editor = window.activeTextEditor
 
     if (editor) {
       const render: DecorationOptions[] = []
-
-      ranges.forEach((range) => {
+      ranges.forEach((info) => {
+        const { id, range } = info
         render.push({
           range,
           renderOptions: {
             after: {
-              contentText: '前方施工中',
-              color: 'red', /** #888888 */
-              border: '0.5px solid red',
+              contentText: intl.value(id) ?? '',
+              color: '#888888',
+              border: '0.5px solid #888888',
             },
           },
         })
@@ -51,17 +52,20 @@ class TextDecoration {
 
     const text = editor.document.getText()
     const ranges: Range[] = []
+    const tipsRanges: ITipRange[] = []
 
-    for (const match of text.matchAll(INTL_RE)) {
+    for (const match of text.matchAll(INTL_ID_RE)) {
+      const id = match[0]
       const index = match.index!
       const start = editor.document.positionAt(index)
-      const end = editor.document.positionAt(index + match[0].length)
+      const end = editor.document.positionAt(index + id.length)
       const range = new Range(start, end)
       ranges.push(range)
-      this.#updateRecord({ id: match[0], start, end })
+      tipsRanges.push({ id, range })
+      this.#updateRecord({ id, start, end })
     }
 
-    this.#createTips(ranges)
+    this.#createTips(tipsRanges)
     editor?.setDecorations(this.#type.hide, ranges)
   }
 
@@ -90,9 +94,10 @@ class TextDecoration {
 
     const { start: selectionStart, end: selectionEnd } = editor.selection
     const currentRanges: Range[] = []
-    const otherRanges: Range[] = []
+    const otherRanges: ITipRange[] = []
+
     for (const item of this.#record) {
-      const { start: itemStart, end: itemEnd } = item
+      const { id, start: itemStart, end: itemEnd } = item
       const range = new Range(itemStart, itemEnd)
       if (
         (selectionStart.line <= itemStart.line && itemStart.line <= selectionEnd.line)
@@ -101,7 +106,7 @@ class TextDecoration {
         currentRanges.push(range)
 
       else
-        otherRanges.push(range)
+        otherRanges.push({ id, range })
     }
 
     this.#clear()

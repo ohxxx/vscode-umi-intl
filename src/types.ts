@@ -1,4 +1,4 @@
-import type { Position, TextEditorDecorationType } from 'vscode'
+import type { Position, Range, TextEditorDecorationType } from 'vscode'
 
 export interface IDecorationRecord {
   id: string
@@ -10,4 +10,9 @@ export interface IDecorationType {
   hide: TextEditorDecorationType
   underline: TextEditorDecorationType
   tip: TextEditorDecorationType
+}
+
+export interface ITipRange {
+  id: string
+  range: Range
 }
