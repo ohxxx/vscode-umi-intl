@@ -33,7 +33,7 @@ class TextDecoration {
           range,
           renderOptions: {
             after: {
-              contentText: value ?? '暂无匹配，请检查',
+              contentText: value ?? '暂无匹配',
               color: value ? '#888888' : '#FC5E5C',
               border: `0.5px solid ${value ? '#888888' : '#FC5E5C'}`,
             },
