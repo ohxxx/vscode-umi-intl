@@ -1,13 +1,12 @@
-import { join } from 'path'
-import { readFileSync, readdirSync } from 'fs'
-import type { WorkspaceFolder } from 'vscode'
-import { workspace } from 'vscode'
 import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
+import parsers from './parsers'
+import file from './file'
 
 class IntlFile {
   #config: Record<string, Record<string, string>> = {}
 
   constructor() {
+    file.init()
     this.#init()
   }
 
@@ -20,30 +19,26 @@ class IntlFile {
   }
 
   #init() {
-    const workspaceFolders: ReadonlyArray<WorkspaceFolder> | undefined = workspace.workspaceFolders
-
-    if (!workspaceFolders)
-      return
-
-    const root = workspaceFolders[0]
-    const path = join(root.uri.fsPath, 'src/locales' /** get config */)
-    this.#readDir(path)
+    this.#readDir(file.rootPath)
   }
 
   #readDir(path: string) {
-    const dir = readdirSync(path)
+    const dir = file.readDir(path)
     const fileNames = dir.filter((item: string) => INTL_FILE_RE.test(item))
 
-    fileNames.forEach((item) => {
-      const key = item.match(INTL_FILE_RE)![0]
-      const values = this.#readFile(`${path}/${item}`)
+    for (const fileName of fileNames) {
+      const key = fileName.match(INTL_FILE_RE)![0]
+      const values = this.#readFile(`${path}/${fileName}`)
       this.#updateConfig(key, values)
-    })
+    }
   }
 
   #readFile(path: string) {
-    const text = readFileSync(path, 'utf-8')
+    let text = file.readFile(path)
     const values: Record<string, string> = {}
+
+    if (!path.endsWith('.json'))
+      text = parsers.file(text)
 
     for (const match of text.matchAll(INTL_KEY_VALUE_RE))
       values[match[1]] = match[2]
