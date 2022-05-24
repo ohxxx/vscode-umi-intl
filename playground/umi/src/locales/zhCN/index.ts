@@ -1,4 +1,4 @@
-import title from './title'
+import { title } from './title'
 import content from './content'
 
 export default {
