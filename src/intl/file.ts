@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'fs'
+import { existsSync, readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
@@ -25,6 +25,11 @@ class File {
   public readFile(path: string) {
     const content = readFileSync(path, 'utf-8')
     return content
+  }
+
+  public exists(path: string) {
+    const isExists = existsSync(path)
+    return isExists
   }
 
   get rootPath() {

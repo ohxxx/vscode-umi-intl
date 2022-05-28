@@ -16,3 +16,5 @@ export interface ITipRange {
   id: string
   range: Range
 }
+
+export type TObj = Record<string, unknown>
