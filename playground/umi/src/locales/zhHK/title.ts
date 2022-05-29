@@ -1,5 +1,5 @@
 export const title = {
-  title: '我是一个小标题',
+  title: '我是一個小標題',
 }
 
 export const head = {
