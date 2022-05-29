@@ -1,6 +1,7 @@
 import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
 import type { TObj } from '../types'
 import { getUserConfig } from '../config'
+import { showErrorMsg } from '../helpers'
 import Parsers from './parsers'
 import file from './file'
 
@@ -45,8 +46,14 @@ class IntlFile {
   }
 
   public init() {
-    file.init()
-    this.#readDir(file.rootPath)
+    const isReady = file.init()
+
+    if (isReady)
+      this.#readDir(file.rootPath)
+    else
+      showErrorMsg('多语言文件夹不存在')
+
+    return isReady
   }
 
   public value(id: string) {

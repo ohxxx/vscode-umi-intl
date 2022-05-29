@@ -11,11 +11,11 @@ export function activate(context: ExtensionContext) {
   if (!getUserConfig().autoDetection)
     return
 
-  intl.init()
-  console.warn('xxx#intl', intl.config)
-
-  window.onDidChangeActiveTextEditor(() => customTextDecoration.create())
-  window.onDidChangeTextEditorSelection(() => customTextDecoration.watch())
+  if (intl.init()) {
+    console.warn('xxx#intl config', intl.config)
+    window.onDidChangeActiveTextEditor(() => customTextDecoration.create())
+    window.onDidChangeTextEditorSelection(() => customTextDecoration.watch())
+  }
 }
 
 export function deactivate() { }

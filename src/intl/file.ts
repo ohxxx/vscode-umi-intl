@@ -17,6 +17,8 @@ class File {
     const localesPath = getUserConfig().localesPath
     const path = join(root.uri.fsPath, localesPath)
     this.#rootPath = path
+
+    return this.exists(path)
   }
 
   public readDir(path: string) {
