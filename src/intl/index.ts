@@ -38,7 +38,7 @@ class IntlFile {
     const values: Record<string, string> = {}
 
     if (!path.endsWith('.json'))
-      text = new Parsers().file(text, file.rootPath)
+      text = new Parsers().parse(text, file.rootPath)
 
     for (const match of text.matchAll(INTL_KEY_VALUE_RE))
       values[match[1]] = match[2]

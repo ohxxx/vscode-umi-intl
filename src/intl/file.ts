@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync } from 'fs'
-import { join } from 'path'
+import { extname, join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
 
@@ -30,6 +30,28 @@ class File {
   public exists(path: string) {
     const isExists = existsSync(path)
     return isExists
+  }
+
+  public createPath = (relpath: string, dirname: string) => {
+    let abspath = relpath
+    if (/^./.test(relpath))
+      abspath = join(dirname, relpath)
+
+    return this.revisePath(abspath)
+  }
+
+  public revisePath = (abspath: string) => {
+    if (extname(abspath) && this.exists(abspath))
+      return { dir: abspath.substring(0, abspath.lastIndexOf('.')), path: abspath }
+
+    const suffixSet = ['.ts', '.js', '.json', '/index.ts', '/index.js']
+    const idx = suffixSet.findIndex((suffix: string) => this.exists(`${abspath}${suffix}`))
+    const fullpath = idx > -1 ? `${abspath}${suffixSet[idx]}` : null
+
+    return {
+      dir: abspath,
+      path: fullpath,
+    }
   }
 
   get rootPath() {

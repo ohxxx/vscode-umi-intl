@@ -1,4 +1,3 @@
-import { extname, join } from 'path'
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import type { IVariables } from '../types'
@@ -7,12 +6,12 @@ import file from './file'
 class Parsers {
   #text = ''
 
-  public file(text: string, dirname: string): string {
-    this.#parse(text, dirname, [])
+  public parse(text: string, dirname: string): string {
+    this.#parseContent(text, dirname, [])
     return this.#text
   }
 
-  #parse(text: string, dirname: string, variables: IVariables[] = []) {
+  #parseContent(text: string, dirname: string, variables: IVariables[] = []) {
     const ast = parse(text, {
       sourceType: 'unambiguous',
       plugins: [
@@ -45,10 +44,10 @@ class Parsers {
         names.push({ type, value: importedName ?? name })
     }
 
-    const { dir, path: importPath } = this.#createPath(filepath, dirname)
+    const { dir, path: importPath } = file.createPath(filepath, dirname)
     if (importPath) {
       const importContent = file.readFile(importPath)
-      return this.#parse(importContent, dir, names)
+      return this.#parseContent(importContent, dir, names)
     }
   }
 
@@ -114,28 +113,6 @@ class Parsers {
       }
     }
     return text
-  }
-
-  #createPath = (relpath: string, dirname: string) => {
-    let abspath = relpath
-    if (/^./.test(relpath))
-      abspath = join(dirname, relpath)
-
-    return this.#revisePath(abspath)
-  }
-
-  #revisePath = (abspath: string) => {
-    if (extname(abspath) && file.exists(abspath))
-      return { dir: abspath.substring(0, abspath.lastIndexOf('.')), path: abspath }
-
-    const suffixSet = ['.ts', '.js', '.json', '/index.ts', '/index.js']
-    const idx = suffixSet.findIndex((suffix: string) => file.exists(`${abspath}${suffix}`))
-    const fullpath = idx > -1 ? `${abspath}${suffixSet[idx]}` : null
-
-    return {
-      dir: abspath,
-      path: fullpath,
-    }
   }
 }
 
