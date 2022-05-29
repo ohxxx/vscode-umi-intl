@@ -29,6 +29,11 @@
     "keybindings": [],
     "configuration": {
       "properties": {
+        "umi-intl.autoDetection": {
+          "type": "boolean",
+          "description": "Enable or disable auto detection of language",
+          "default": true
+        },
         "umi-intl.localesPath": {
           "type": "string",
           "description": "The path to the locales directory",

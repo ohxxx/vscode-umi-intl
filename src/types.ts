@@ -25,6 +25,7 @@ export interface IVariables {
 }
 
 export interface IUserConfig {
+  autoDetection: Boolean
   localesPath: string
   displayLanguage: string
 }
