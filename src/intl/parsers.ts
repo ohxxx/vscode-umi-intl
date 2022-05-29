@@ -9,7 +9,6 @@ class Parsers {
 
   public file(text: string, dirname: string): string {
     this.#parse(text, dirname, [])
-
     return this.#text
   }
 
@@ -110,10 +109,8 @@ class Parsers {
     let text = ''
     for (const property of properties) {
       if (property.type === 'ObjectProperty') {
-        const key = property.key.name
-        const value = property.value.value
-        const result = JSON.stringify({ [key]: value })
-        text += result
+        const { key, value } = property
+        text += JSON.stringify({ [key?.name ?? key?.value]: value?.value })
       }
     }
     return text
@@ -142,6 +139,4 @@ class Parsers {
   }
 }
 
-const parsers = new Parsers()
-
-export default parsers
+export default Parsers

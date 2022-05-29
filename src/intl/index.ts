@@ -1,5 +1,5 @@
 import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
-import parsers from './parsers'
+import Parsers from './parsers'
 import file from './file'
 
 class IntlFile {
@@ -38,7 +38,7 @@ class IntlFile {
     const values: Record<string, string> = {}
 
     if (!path.endsWith('.json'))
-      text = parsers.file(text, file.rootPath)
+      text = new Parsers().file(text, file.rootPath)
 
     for (const match of text.matchAll(INTL_KEY_VALUE_RE))
       values[match[1]] = match[2]
