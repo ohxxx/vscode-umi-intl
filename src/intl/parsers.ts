@@ -1,15 +1,19 @@
 import { extname, join } from 'path'
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
-import type { TObj } from '../types'
+import type { IVariables } from '../types'
 import file from './file'
 
 class Parsers {
   #text = ''
 
   public file(text: string, dirname: string): string {
-    this.#text += text
+    this.#parse(text, dirname, [])
 
+    return this.#text
+  }
+
+  #parse(text: string, dirname: string, variables: IVariables[] = []) {
     const ast = parse(text, {
       sourceType: 'unambiguous',
       plugins: [
@@ -22,26 +26,14 @@ class Parsers {
       ImportDeclaration: (path: any) => {
         this.#parseImport(path, dirname)
       },
-      /**
-       * @todo：import 引用问题，排除不匹配的 name
-       */
-      // ExportDeclaration: (path: any) => {
-      //   this.#text += this.#parseExport(path, variables)
-      // },
+      ExportDeclaration: (path: any) => {
+        this.#text += this.#parseExport(path, variables)
+      },
     })
-
-    return this.#text
   }
 
-  /**
-   * import xxx from './xxx'
-   * import xxx from '@/xxx'
-   * import { xxx } from '@/xxx'
-   * import { xxx as yyy } from '@/xxx'
-   * import { xxx, yyy >>> 没有被引用 } from '@/xxx'
-   */
   #parseImport = (path: any, dirname: string) => {
-    const names: TObj[] = []
+    const names: IVariables[] = []
     const filepath = path.node.source.value
 
     const specifiers = path.node.specifiers
@@ -57,8 +49,74 @@ class Parsers {
     const { dir, path: importPath } = this.#createPath(filepath, dirname)
     if (importPath) {
       const importContent = file.readFile(importPath)
-      return this.file(importContent, dir)
+      return this.#parse(importContent, dir, names)
     }
+  }
+
+  #parseExport = (path: any, variables: IVariables[]) => {
+    if (variables.length) {
+      const container = path.container
+      for (const variable of variables) {
+        const { type, value } = variable
+
+        if (type === 'ImportSpecifier') {
+          const properties = this.#handleImportSpecifier(container, value)
+          return this.#extractProperties(properties)
+        }
+
+        if (type === 'ImportDefaultSpecifier') {
+          const properties = this.#ImportDefaultSpecifier(container)
+          return this.#extractProperties(properties)
+        }
+      }
+    }
+    else {
+      const properties = path.node.declaration?.properties ?? []
+      return this.#extractProperties(properties)
+    }
+  }
+
+  #handleImportSpecifier = (container: [], value: string) => {
+    for (const node of container) {
+      const { type, declarations, declaration } = node
+      if (type === 'VariableDeclaration')
+        return this.#extractDeclaration(declarations, type, value)
+
+      if (type === 'ExportNamedDeclaration') {
+        const { type, declarations } = declaration
+        return this.#extractDeclaration(declarations, type, value)
+      }
+    }
+  }
+
+  #ImportDefaultSpecifier = (container: any[]) => {
+    return container.find((n: any) => n.type === 'ExportDefaultDeclaration')?.declaration?.properties
+  }
+
+  #extractDeclaration = (declarations: [], type: string, value: string) => {
+    if (type === 'VariableDeclaration') {
+      const declaration: any = declarations?.find((n: any) => n.id.name === value)
+      if (declaration)
+        return declaration?.init?.properties ?? []
+    }
+    /** ... */
+    return []
+  }
+
+  #extractProperties = (properties: any[] /** type */) => {
+    if (!properties.length)
+      return ''
+
+    let text = ''
+    for (const property of properties) {
+      if (property.type === 'ObjectProperty') {
+        const key = property.key.name
+        const value = property.value.value
+        const result = JSON.stringify({ [key]: value })
+        text += result
+      }
+    }
+    return text
   }
 
   #createPath = (relpath: string, dirname: string) => {
