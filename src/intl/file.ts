@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'fs'
 import { extname, join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
+import { getUserConfig } from '../config'
 
 class File {
   #rootPath = ''
@@ -13,7 +14,8 @@ class File {
       return
 
     const root = workspaceFolders[0]
-    const path = join(root.uri.fsPath, 'src/locales' /** get config */)
+    const localesPath = getUserConfig().localesPath
+    const path = join(root.uri.fsPath, localesPath)
     this.#rootPath = path
   }
 

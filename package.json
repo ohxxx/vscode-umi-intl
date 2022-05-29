@@ -28,7 +28,18 @@
     "commands": [],
     "keybindings": [],
     "configuration": {
-      "properties": {}
+      "properties": {
+        "umi-intl.localesPath": {
+          "type": "string",
+          "description": "The path to the locales directory",
+          "default": "src/locales"
+        },
+        "umi-intl.displayLanguage": {
+          "type": "string",
+          "description": "The display language",
+          "default": "zh-CN"
+        }
+      }
     }
   },
   "icon": "assets/logo.png",

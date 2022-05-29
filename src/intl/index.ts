@@ -1,26 +1,19 @@
 import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
 import type { TObj } from '../types'
+import { getUserConfig } from '../config'
 import Parsers from './parsers'
 import file from './file'
 
 class IntlFile {
+  #displayLanguage: string = getUserConfig().displayLanguage
   #config: Record<string, Record<string, string>> = {}
-
-  constructor() {
-    file.init()
-    this.#init()
-  }
 
   #updateConfig(key: string, value: Record<string, string>) {
     this.#config[key] = value
   }
 
   #value(id: string) {
-    return this.#config['zh-CN' /** get config */][id]
-  }
-
-  #init() {
-    this.#readDir(file.rootPath)
+    return this.#config[this.#displayLanguage][id]
   }
 
   #readDir(path: string) {
@@ -49,6 +42,11 @@ class IntlFile {
 
   get config() {
     return this.#config
+  }
+
+  public init() {
+    file.init()
+    this.#readDir(file.rootPath)
   }
 
   public value(id: string) {

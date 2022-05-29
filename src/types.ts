@@ -23,3 +23,8 @@ export interface IVariables {
   type: string
   value: string
 }
+
+export interface IUserConfig {
+  localesPath: string
+  displayLanguage: string
+}
