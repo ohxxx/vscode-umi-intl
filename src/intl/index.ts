@@ -1,4 +1,5 @@
 import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
+import type { TObj } from '../types'
 import Parsers from './parsers'
 import file from './file'
 
@@ -35,7 +36,7 @@ class IntlFile {
 
   #readFile(path: string) {
     let text = file.readFile(path)
-    const values: Record<string, string> = {}
+    const values: TObj = {}
 
     if (!path.endsWith('.json'))
       text = new Parsers().parse(text, file.rootPath)

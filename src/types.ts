@@ -17,7 +17,7 @@ export interface ITipRange {
   range: Range
 }
 
-export type TObj = Record<string, unknown>
+export type TObj = Record<string, any>
 
 export interface IVariables {
   type: string

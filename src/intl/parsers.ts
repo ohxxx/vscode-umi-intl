@@ -1,6 +1,6 @@
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
-import type { IVariables } from '../types'
+import type { IVariables, TObj } from '../types'
 import file from './file'
 
 class Parsers {
@@ -74,7 +74,7 @@ class Parsers {
     }
   }
 
-  #handleImportSpecifier = (container: [], value: string) => {
+  #handleImportSpecifier = (container: TObj[], value: string) => {
     for (const node of container) {
       const { type, declarations, declaration } = node
       if (type === 'VariableDeclaration')
@@ -87,21 +87,23 @@ class Parsers {
     }
   }
 
-  #ImportDefaultSpecifier = (container: any[]) => {
-    return container.find((n: any) => n.type === 'ExportDefaultDeclaration')?.declaration?.properties
+  #ImportDefaultSpecifier = (container: TObj[]) => {
+    return container.find(n => n.type === 'ExportDefaultDeclaration')?.declaration?.properties
   }
 
-  #extractDeclaration = (declarations: [], type: string, value: string) => {
+  #extractDeclaration = (declarations: TObj[], type: string, value: string) => {
     if (type === 'VariableDeclaration') {
-      const declaration: any = declarations?.find((n: any) => n.id.name === value)
+      const declaration = declarations?.find(n => n.id.name === value)
       if (declaration)
         return declaration?.init?.properties ?? []
     }
+
     /** ... */
+
     return []
   }
 
-  #extractProperties = (properties: any[] /** type */) => {
+  #extractProperties = (properties: TObj[]) => {
     if (!properties.length)
       return ''
 
