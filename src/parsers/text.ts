@@ -1,9 +1,9 @@
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import type { IVariables, TObj } from '../types'
-import file from './file'
+import file from '../file'
 
-class Parsers {
+class TextParser {
   #text = ''
 
   public parse(text: string, dirname: string): string {
@@ -118,4 +118,4 @@ class Parsers {
   }
 }
 
-export default Parsers
+export default TextParser

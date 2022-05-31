@@ -1,8 +1,8 @@
-import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
-import type { TObj } from '../types'
-import { getUserConfig } from '../config'
-import { showErrorMsg } from '../helpers'
-import Parsers from './parsers'
+import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from './constants'
+import type { TObj } from './types'
+import { getUserConfig } from './config'
+import { showErrorMsg } from './helpers'
+import TextParser from './parsers/text'
 import file from './file'
 
 class IntlFile {
@@ -33,7 +33,7 @@ class IntlFile {
     const values: TObj = {}
 
     if (!path.endsWith('.json'))
-      text = new Parsers().parse(text, file.rootPath)
+      text = new TextParser().parse(text, file.localesPath)
 
     for (const match of text.matchAll(INTL_KEY_VALUE_RE))
       values[match[1]] = match[2]
@@ -46,14 +46,14 @@ class IntlFile {
   }
 
   public init() {
-    const isReady = file.init()
+    const isFileReady = file.init()
 
-    if (isReady)
-      this.#readDir(file.rootPath)
+    if (isFileReady)
+      this.#readDir(file.localesPath)
     else
       showErrorMsg('多语言文件夹不存在')
 
-    return isReady
+    return isFileReady
   }
 
   public value(id: string) {
@@ -61,6 +61,6 @@ class IntlFile {
   }
 }
 
-const intl = new IntlFile()
+const intlFile = new IntlFile()
 
-export default intl
+export default intlFile

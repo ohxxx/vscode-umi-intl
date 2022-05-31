@@ -2,10 +2,12 @@ import { existsSync, readFileSync, readdirSync } from 'fs'
 import { extname, join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
-import { getUserConfig } from '../config'
+import { getUserConfig } from './config'
+import { showErrorMsg } from './helpers'
 
 class File {
   #rootPath = ''
+  #localesPath = ''
 
   public init() {
     const workspaceFolders: ReadonlyArray<WorkspaceFolder> | undefined = workspace.workspaceFolders
@@ -16,7 +18,12 @@ class File {
     const root = workspaceFolders[0]
     const localesPath = getUserConfig().localesPath
     const path = join(root.uri.fsPath, localesPath)
-    this.#rootPath = path
+
+    this.#rootPath = join(root.uri.fsPath)
+    this.#localesPath = path
+
+    if (!this.exists(path))
+      showErrorMsg('多语言文件夹不存在')
 
     return this.exists(path)
   }
@@ -60,6 +67,10 @@ class File {
 
   get rootPath() {
     return this.#rootPath
+  }
+
+  get localesPath() {
+    return this.#localesPath
   }
 }
 
