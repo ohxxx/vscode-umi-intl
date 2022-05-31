@@ -2,8 +2,8 @@ import { existsSync, readFileSync, readdirSync } from 'fs'
 import { extname, join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
-import { getUserConfig } from './config'
-import { showErrorMsg } from './helpers'
+import { getUserConfig } from '../config'
+import { showErrorMsg } from '../helpers'
 
 class File {
   #rootPath = ''

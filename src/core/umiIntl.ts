@@ -1,8 +1,8 @@
 import { window } from 'vscode'
-import { getUserConfig } from './config'
-import customTextDecoration from './decoration'
-import intlFile from './intlFile'
-import packageParser from './parsers/packages'
+import { getUserConfig } from '../config'
+import customTextDecoration from '../decoration'
+import packageParser from '../parsers/packages'
+import intl from './intl'
 
 class UmiIntl {
   static init() {
@@ -12,8 +12,8 @@ class UmiIntl {
     if (!packageParser.init())
       return
 
-    if (intlFile.init()) {
-      console.warn('xxx#intl config', intlFile.config)
+    if (intl.init()) {
+      console.warn('xxx#intl config', intl.config)
       window.onDidChangeActiveTextEditor(() => customTextDecoration.create())
       window.onDidChangeTextEditorSelection(() => customTextDecoration.watch())
     }

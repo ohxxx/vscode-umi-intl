@@ -1,6 +1,6 @@
 import type { ExtensionContext } from 'vscode'
 import { window } from 'vscode'
-import UmiIntl from './umiIntl'
+import UmiIntl from './core/umiIntl'
 
 export function activate(context: ExtensionContext) {
   console.warn('xxx#context', context)

@@ -1,7 +1,7 @@
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import type { IVariables, TObj } from '../types'
-import file from '../file'
+import file from '../core/file'
 
 class TextParser {
   #text = ''

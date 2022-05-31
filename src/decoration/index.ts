@@ -1,7 +1,7 @@
 import type { DecorationOptions } from 'vscode'
 import { Range, window } from 'vscode'
 import { INTL_ID_RE } from '../constants'
-import intlFile from '../intlFile'
+import intl from '../core/intl'
 import type { IDecorationRecord, IDecorationType, ITipRange } from '../types'
 import decorationType from './type'
 
@@ -28,7 +28,7 @@ class TextDecoration {
       const render: DecorationOptions[] = []
       ranges.forEach((info) => {
         const { id, range } = info
-        const value = intlFile.value(id)
+        const value = intl.value(id)
         render.push({
           range,
           renderOptions: {

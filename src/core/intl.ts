@@ -1,11 +1,11 @@
-import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from './constants'
-import type { TObj } from './types'
-import { getUserConfig } from './config'
-import { showErrorMsg } from './helpers'
-import TextParser from './parsers/text'
+import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
+import type { TObj } from '../types'
+import { getUserConfig } from '../config'
+import { showErrorMsg } from '../helpers'
+import TextParser from '../parsers/text'
 import file from './file'
 
-class IntlFile {
+class Intl {
   #displayLanguage: string = getUserConfig().displayLanguage
   #config: Record<string, Record<string, string>> = {}
 
@@ -73,6 +73,6 @@ class IntlFile {
   }
 }
 
-const intlFile = new IntlFile()
+const intl = new Intl()
 
-export default intlFile
+export default intl
