@@ -17,6 +17,14 @@ class IntlFile {
     return this.#config[this.#displayLanguage][id]
   }
 
+  #values(id: string) {
+    return Object
+      .entries(this.#config)
+      .reduce((acc, [key, values]) => {
+        return { ...acc, ...{ [key]: values[id] } }
+      }, {})
+  }
+
   #readDir(path: string) {
     const dir = file.readDir(path)
     const fileNames = dir.filter((item: string) => INTL_FILE_RE.test(item))
@@ -58,6 +66,10 @@ class IntlFile {
 
   public value(id: string) {
     return this.#value(id)
+  }
+
+  public values(id: string) {
+    return this.#values(id)
   }
 }
 
