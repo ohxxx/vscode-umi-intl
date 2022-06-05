@@ -3,7 +3,7 @@ import traverse from '@babel/traverse'
 import type { IVariables, TObj } from '../types'
 import file from '../core/file'
 
-class TextParser {
+class BaseParser {
   #text = ''
 
   public parse(text: string, dirname: string): string {
@@ -118,4 +118,4 @@ class TextParser {
   }
 }
 
-export default TextParser
+export default BaseParser

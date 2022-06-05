@@ -2,7 +2,7 @@ import { INTL_FILE_RE, INTL_KEY_VALUE_RE } from '../constants'
 import type { TObj } from '../types'
 import { getUserConfig } from '../config'
 import { showErrorMsg } from '../helpers'
-import TextParser from '../parsers/text'
+import BaseParser from '../parsers/base'
 import file from './file'
 
 class Intl {
@@ -41,7 +41,7 @@ class Intl {
     const values: TObj = {}
 
     if (!path.endsWith('.json'))
-      text = new TextParser().parse(text, file.localesPath)
+      text = new BaseParser().parse(text, file.localesPath)
 
     for (const match of text.matchAll(INTL_KEY_VALUE_RE))
       values[match[1]] = match[2]
