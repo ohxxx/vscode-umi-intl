@@ -1,8 +1,8 @@
-import type { DecorationOptions } from 'vscode'
-import { Range, window } from 'vscode'
-import { INTL_ID_RE } from '../constants'
+import type { DecorationOptions, Position, TextDocument } from 'vscode'
+import { Hover, MarkdownString, Range, languages, window } from 'vscode'
+import { INTL_ID_RE, LANGUAGES } from '../constants'
 import intl from '../core/intl'
-import type { IDecorationRecord, IDecorationType, ITipRange } from '../types'
+import type { IDecorationRecord, IDecorationType, ITipRange, TObj } from '../types'
 import decorationType from './type'
 
 class TextDecoration {
@@ -118,11 +118,46 @@ class TextDecoration {
     editor.setDecorations(this.#type.underline, currentRanges)
   }
 
+  #hover() {
+    const record = this.#record
+    const createHover = this.#createHover
+
+    languages.registerHoverProvider(LANGUAGES, {
+      provideHover(document: TextDocument, position: Position) {
+        const offsetAt = (range: Position) => document.offsetAt(range)
+        const offset = offsetAt(position)
+
+        const item = record.find(item => offsetAt(item.start) <= offset && offset <= offsetAt(item.end))
+        if (!item)
+          return
+
+        const values = intl.values(item.id)
+        if (!values)
+          return
+
+        const content = createHover(values)
+
+        return new Hover(content)
+      },
+    })
+  }
+
+  #createHover(values: TObj) {
+    const text = new MarkdownString()
+
+    let str = ''
+    for (const id of Object.keys(values))
+      str += `${id} : ${values[id]}\n\n`
+
+    return text.appendMarkdown(str)
+  }
+
   public create() {
     this.#check()
     this.#clearRecord()
     this.#clear()
     this.#update()
+    this.#hover()
   }
 }
 

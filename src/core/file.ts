@@ -3,6 +3,7 @@ import { extname, join } from 'path'
 import type { WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
 import { getUserConfig } from '../config'
+import { FILE_SUFFIX } from '../constants'
 import { showErrorMsg } from '../helpers'
 
 class File {
@@ -55,9 +56,8 @@ class File {
     if (extname(abspath) && this.exists(abspath))
       return { dir: abspath.substring(0, abspath.lastIndexOf('.')), path: abspath }
 
-    const suffixSet = ['.ts', '.js', '.json', '/index.ts', '/index.js']
-    const idx = suffixSet.findIndex((suffix: string) => this.exists(`${abspath}${suffix}`))
-    const fullpath = idx > -1 ? `${abspath}${suffixSet[idx]}` : null
+    const idx = FILE_SUFFIX.findIndex((suffix: string) => this.exists(`${abspath}${suffix}`))
+    const fullpath = idx > -1 ? `${abspath}${FILE_SUFFIX[idx]}` : null
 
     return {
       dir: abspath,

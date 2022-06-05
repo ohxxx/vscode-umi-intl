@@ -18,11 +18,15 @@ class Intl {
   }
 
   #values(id: string) {
-    return Object
+    const result = Object
       .entries(this.#config)
       .reduce((acc, [key, values]) => {
-        return { ...acc, ...{ [key]: values[id] } }
+        return { ...acc, ...{ [key]: values[id] ?? '-' } }
       }, {})
+
+    const isExists = Object.values(result).every(v => v === '-')
+
+    return isExists ? null : result
   }
 
   #readDir(path: string) {
