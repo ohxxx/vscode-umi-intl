@@ -17,7 +17,15 @@ class UmiIntl {
       console.warn('xxx#intl config', intl.config)
       window.onDidChangeActiveTextEditor(throttleFn(() => customTextDecoration.create()))
       window.onDidChangeTextEditorSelection(throttleFn(() => customTextDecoration.watch()))
-      workspace.onDidChangeTextDocument(throttleFn(() => customTextDecoration.create()))
+      workspace.onDidChangeTextDocument((e) => {
+        const path = e.document.uri.fsPath
+        if (path.includes(getUserConfig().localesPath))
+          // intl.reloadFile(path)
+          intl.init()
+
+        else
+          throttleFn(() => customTextDecoration.create())
+      })
     }
   }
 }

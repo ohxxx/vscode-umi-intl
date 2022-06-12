@@ -68,6 +68,12 @@ class Intl {
     return isFileReady
   }
 
+  /** @TODO */
+  public reloadFile(_path: string) {
+    // const lang = path.match(INTL_FILE_RE)![0]
+    // const values = this.#readFile(path)
+  }
+
   public value(id: string) {
     return this.#value(id)
   }
