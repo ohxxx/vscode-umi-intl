@@ -13,11 +13,18 @@ class TextDecoration {
     tip: decorationType.tip,
   }
 
-  #updateRecord(record: IDecorationRecord) {
+  #addRecord(record: IDecorationRecord) {
     this.#record.push(record)
   }
 
-  #clearRecord() {
+  #updateRecord(data: IDecorationRecord) {
+    const record = this.#record
+    const index = record.findIndex(item => item.id === data.id)
+    if (index > -1)
+      this.#record[index] = data
+  }
+
+  #resetRecord() {
     this.#record = []
   }
 
@@ -63,19 +70,11 @@ class TextDecoration {
       const range = new Range(start, end)
       ranges.push(range)
       tipsRanges.push({ id, range })
-      this.#updateRecord({ id, start, end })
+      this.#addRecord({ id, start, end, state: 'tip' })
     }
 
     this.#createTips(tipsRanges)
     editor?.setDecorations(this.#type.hide, ranges)
-  }
-
-  #check() {
-    /** ... */
-  }
-
-  #refresh() {
-    /** ... */
   }
 
   #clear() {
@@ -103,11 +102,14 @@ class TextDecoration {
       if (
         (selectionStart.line <= itemStart.line && itemStart.line <= selectionEnd.line)
         || (selectionStart.line <= itemEnd.line && itemEnd.line <= selectionEnd.line)
-      )
+      ) {
+        this.#updateRecord({ ...item, state: 'underline' })
         currentRanges.push(range)
-
-      else
+      }
+      else {
+        this.#updateRecord({ ...item, state: 'tip' })
         otherRanges.push({ id, range })
+      }
     }
 
     this.#clear()
@@ -127,7 +129,11 @@ class TextDecoration {
         const offsetAt = (range: Position) => document.offsetAt(range)
         const offset = offsetAt(position)
 
-        const item = record.find(item => offsetAt(item.start) <= offset && offset <= offsetAt(item.end))
+        const item = record.find(item =>
+          offsetAt(item.start) <= offset
+          && offset <= offsetAt(item.end)
+          && item.state === 'underline',
+        )
         if (!item)
           return
 
@@ -137,7 +143,10 @@ class TextDecoration {
 
         const content = createHover(values)
 
-        return new Hover(content)
+        return new Hover(
+          content,
+          new Range(item.start, item.end),
+        )
       },
     })
   }
@@ -153,9 +162,9 @@ class TextDecoration {
   }
 
   public create() {
-    this.#check()
-    this.#clearRecord()
     this.#clear()
+    this.#resetRecord()
+
     this.#update()
     this.#hover()
   }
