@@ -1,6 +1,7 @@
-import { window } from 'vscode'
+import { window, workspace } from 'vscode'
 import { getUserConfig } from '../config'
 import customTextDecoration from '../decoration'
+import { throttleFn } from '../helpers'
 import packageParser from '../parsers/packages'
 import intl from './intl'
 
@@ -14,8 +15,9 @@ class UmiIntl {
 
     if (intl.init()) {
       console.warn('xxx#intl config', intl.config)
-      window.onDidChangeActiveTextEditor(() => customTextDecoration.create())
-      window.onDidChangeTextEditorSelection(() => customTextDecoration.watch())
+      window.onDidChangeActiveTextEditor(throttleFn(() => customTextDecoration.create()))
+      window.onDidChangeTextEditorSelection(throttleFn(() => customTextDecoration.watch()))
+      workspace.onDidChangeTextDocument(throttleFn(() => customTextDecoration.create()))
     }
   }
 }
