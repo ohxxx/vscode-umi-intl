@@ -1,10 +1,16 @@
-# vscode-umi-intl
+<sub><em>Umi Intl for VS Code</em></sub>
+<h1 align="center">
+  <img src="./assets/logo.png" height="100">
+</h1>
 
-前方施工中
+## 简介
 
-### TODOs
+## 效果
 
-- [ ] packages umi 检查
-- [ ] locales 文件操作监听
-- [ ] locales 当前文本编辑更新
-- [ ] 多语言 hover 列表
+<h2 align="center">
+  <img src="./assets/example.gif">
+</h2>
+
+## TODOs
+
+## 灵感
