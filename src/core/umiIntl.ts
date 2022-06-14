@@ -20,17 +20,19 @@ class UmiIntl {
       workspace.onDidSaveTextDocument((e) => {
         if (e?.uri?.fsPath?.includes(getUserConfig().localesPath))
           intl.init()
-
         else
           customTextDecoration.create()
       })
-      workspace.onDidChangeTextDocument((e) => {
-        if (e?.document?.uri?.fsPath?.includes(getUserConfig().localesPath))
-          intl.init()
-
-        else
-          throttleFn(() => customTextDecoration.create())
-      })
+      /**
+       * @ISSUE
+       *   有点问题，废弃或者修复
+       */
+      // workspace.onDidChangeTextDocument((e) => {
+      //   if (e?.document?.uri?.fsPath?.includes(getUserConfig().localesPath))
+      //     intl.init()
+      //   else
+      //     throttleFn(() => customTextDecoration.create())
+      // })
     }
   }
 }
