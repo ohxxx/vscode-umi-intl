@@ -28,5 +28,6 @@
 ## 灵感
 
 > 灵感来源：[ i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally)
+>
 > `i18n Ally` 对于 `umi` 是不支持的。因为 umi 内置了 `react intl` 插件，所以准确的避开了 `i18n Ally` 的匹配规则。但是这个功能我感觉非常好玩且有用，所以就参照 `i18n Ally` 中我想要的功能开发了一下。
 
