@@ -14,6 +14,7 @@
 <h2 align="center">
   <img src="./assets/example.gif">
 </h2>
+
 ## 注意
 
 > 目前仅支持：`formatMessage({ id: 'xxx' })`
