@@ -2,6 +2,7 @@ import type { Position, Range, TextEditorDecorationType } from 'vscode'
 
 export interface IDecorationRecord {
   id: string
+  key: string
   state: 'tip' | 'underline'
   start: Position
   end: Position
@@ -15,6 +16,7 @@ export interface IDecorationType {
 
 export interface ITipRange {
   id: string
+  key: string
   range: Range
 }
 

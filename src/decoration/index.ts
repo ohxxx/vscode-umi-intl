@@ -2,6 +2,7 @@ import type { DecorationOptions, Position, TextDocument } from 'vscode'
 import { Hover, MarkdownString, Range, languages, window } from 'vscode'
 import { INTL_ID_RE, LANGUAGES } from '../constants'
 import intl from '../core/intl'
+import { uuid } from '../helpers'
 import type { IDecorationRecord, IDecorationType, ITipRange, TObj } from '../types'
 import decorationType from './type'
 
@@ -34,8 +35,8 @@ class TextDecoration {
     if (editor) {
       const render: DecorationOptions[] = []
       ranges.forEach((info) => {
-        const { id, range } = info
-        const value = intl.value(id)
+        const { key, range } = info
+        const value = intl.value(key)
         render.push({
           range,
           renderOptions: {
@@ -63,14 +64,15 @@ class TextDecoration {
     const tipsRanges: ITipRange[] = []
 
     for (const match of text.matchAll(INTL_ID_RE)) {
-      const id = match[0]
+      const id = uuid()
+      const key = match[0]
       const index = match.index!
       const start = editor.document.positionAt(index)
-      const end = editor.document.positionAt(index + id.length)
+      const end = editor.document.positionAt(index + key.length)
       const range = new Range(start, end)
       ranges.push(range)
-      tipsRanges.push({ id, range })
-      this.#addRecord({ id, start, end, state: 'tip' })
+      tipsRanges.push({ id, key, range })
+      this.#addRecord({ id, key, start, end, state: 'tip' })
     }
 
     this.#createTips(tipsRanges)
@@ -86,7 +88,7 @@ class TextDecoration {
     }
   }
 
-  public watch() {
+  #watch() {
     const editor = window.activeTextEditor
 
     if (!editor || !this.#record.length)
@@ -97,18 +99,18 @@ class TextDecoration {
     const otherRanges: ITipRange[] = []
 
     for (const item of this.#record) {
-      const { id, start: itemStart, end: itemEnd } = item
+      const { id, key, start: itemStart, end: itemEnd } = item
       const range = new Range(itemStart, itemEnd)
       if (
-        (selectionStart.line <= itemStart.line && itemStart.line <= selectionEnd.line)
-        || (selectionStart.line <= itemEnd.line && itemEnd.line <= selectionEnd.line)
+        selectionStart.isAfterOrEqual(itemStart)
+        && selectionEnd.isBeforeOrEqual(itemEnd)
       ) {
         this.#updateRecord({ ...item, state: 'underline' })
         currentRanges.push(range)
       }
       else {
         this.#updateRecord({ ...item, state: 'tip' })
-        otherRanges.push({ id, range })
+        otherRanges.push({ id, key, range })
       }
     }
 
@@ -137,7 +139,7 @@ class TextDecoration {
         if (!item)
           return
 
-        const values = intl.values(item.id)
+        const values = intl.values(item.key)
         if (!values)
           return
 
@@ -167,9 +169,8 @@ class TextDecoration {
 
     this.#update()
     this.#hover()
+    this.#watch()
   }
 }
 
-const customTextDecoration = new TextDecoration()
-
-export default customTextDecoration
+export default TextDecoration
